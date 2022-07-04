@@ -1,0 +1,14 @@
+{
+  "name": "raf-queue",
+  "version": "0.0.1",
+  "main": "index.js",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/web-alchemy/raf-queue.git"
+  },
+  "bugs": {
+    "url": "https://github.com/web-alchemy/raf-queue/issues"
+  },
+  "homepage": "https://github.com/web-alchemy/raf-queue#readme"
+}
