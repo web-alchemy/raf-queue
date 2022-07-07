@@ -1,71 +1,44 @@
-let requestId
-const tasks = new Set()
-const hiddenTasks = new Set()
+class Queue {
+  constructor() {
+    this._requestId = null
+    this._tasks = new Set()
+  }
 
-function run() {
-  requestId = requestAnimationFrame(tick)
-}
+  run() {
+    this._requestId = requestAnimationFrame(this._tick)
+  }
 
-function stop() {
-  cancelAnimationFrame(requestId)
-}
+  stop() {
+    cancelAnimationFrame(this._requestId)
+  }
 
-function add(task) {
-  tasks.add(task)
-  if (tasks.size === 1) run()
-}
+  add(task) {
+    this._tasks.add(task)
+    if (this._tasks.size === 1) {
+      this.run()
+    }
+  }
 
-function remove(task) {
-  const deletedTask = tasks.delete(task)
-  if (tasks.size === 0) stop()
-  return deletedTask
-}
+  remove(task) {
+    const deletedTask = this._tasks.delete(task)
+    if (this._tasks.size === 0) {
+      this.stop()
+    }
+    return deletedTask
+  }
 
-function clear() {
-  stop()
-  tasks.clear()
-  hiddenTasks.clear()
-}
+  destroy() {
+    this.stop()
+    this._tasks.clear()
+  }
 
-function tick(time) {
-  tasks.forEach(task => task.tick(time))
-  if (tasks.size > 0) run()
-}
-
-function hide(task) {
-  if (remove(task)) {
-    hiddenTasks.add(task)
+  _tick = (time) => {
+    this._tasks.forEach(task => task(time))
+    if (this._tasks.size > 0) {
+      this.run()
+    }
   }
 }
 
-function restore(task) {
-  task.startTime = performance.now() - task.progress * task.duration
-  add(task)
-}
-
-function hideAll() {
-  tasks.forEach(hide)
-}
-
-function restoreAll() {
-  hiddenTasks.forEach(task => {
-    hiddenTasks.delete(task)
-    restore(task)
-  })
-}
-
-document.addEventListener('visibilitychange', () => {
-  ({
-    'hidden': hideAll,
-    'visible': restoreAll
-  })[document.visibilityState]()
-})
-
-export {
-  run,
-  stop,
-  add,
-  remove,
-  clear,
-  restore
-}
+export { Queue }
+export default new Queue
